@@ -1,0 +1,27 @@
+{
+  "name": "voting-smart-contract",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy" : "cd hardhat && npx hardhat run --network localhost scripts/deploy.js",
+    "htest" : "cd hardhat && npx hardhat test"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SerhatAkar/Voting-smart-contract.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SerhatAkar/Voting-smart-contract/issues"
+  },
+  "homepage": "https://github.com/SerhatAkar/Voting-smart-contract#readme",
+  "dependencies": {
+    "ethers": "^5.4.6",
+    "hardhat": "^2.6.1"
+  }
+}
