@@ -84,9 +84,7 @@
   height: 100vh;
 }
 
-.footer{
-  grid-area: footer;
-}
+
 @keyframes bounce {
   from,
   20%,

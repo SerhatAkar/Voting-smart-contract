@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     footer: {
         backgroundColor: theme.palette.background.paper,
         // marginTop: theme.spacing(8),
-        padding: theme.spacing(6, 0),
+        
     },
 }));
 
@@ -39,7 +39,6 @@ export default function Footer() {
                 <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
                     Made for my portfolio with love
                 </Typography>
-                <Copyright />
             </Container>
         </footer>
     );

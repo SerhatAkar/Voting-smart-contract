@@ -78,10 +78,9 @@ function App() {
                         </main>
                     </Grid>
                 </Grid>
-                <Grid item xs={12}  className={"footer"}>
-                    <Footer />
-                </Grid>
+
             </Grid>
+            <Footer/>
 
         </React.Fragment>
     );
