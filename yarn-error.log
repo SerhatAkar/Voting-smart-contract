@@ -1,0 +1,60 @@
+Arguments: 
+  /home/hemesky/.nvm/versions/node/v16.3.0/bin/node /home/hemesky/.nvm/versions/node/v16.3.0/bin/yarn deploy
+
+PATH: 
+  /home/hemesky/.nvm/versions/node/v16.3.0/bin:/home/hemesky/WebstormProjects/Voting-smart-contract/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  16.3.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  SyntaxError: /home/hemesky/WebstormProjects/Voting-smart-contract/package.json: Unexpected token } in JSON at position 357
+      at JSON.parse (<anonymous>)
+      at /home/hemesky/.nvm/versions/node/v16.3.0/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/home/hemesky/.nvm/versions/node/v16.3.0/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /home/hemesky/.nvm/versions/node/v16.3.0/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "voting-smart-contract",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "deploy": "cd hardhat && npx hardhat run --network localhost scripts/deploy.js",
+      "htest": "cd hardhat && npx hardhat test",
+      "node": " cd hardhat && npx hardhat node",
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/SerhatAkar/Voting-smart-contract.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/SerhatAkar/Voting-smart-contract/issues"
+    },
+    "homepage": "https://github.com/SerhatAkar/Voting-smart-contract#readme",
+    "dependencies": {
+      "ethers": "^5.4.6",
+      "hardhat": "^2.6.1"
+    },
+    "devDependencies": {
+      "@symfoni/hardhat-react": "^0.3.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

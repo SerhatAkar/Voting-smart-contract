@@ -43,6 +43,7 @@ contract VotingContract {
 
     }
     function getProposals() public view returns (bytes32){
+        console.log("dedans");
         return proposals[0].name;
     }
     /**
