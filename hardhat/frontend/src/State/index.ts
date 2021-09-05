@@ -3,10 +3,12 @@ import appStateReducer from './reducer'
 import {updateVersion} from "./action";
 import {userAccountSlice} from "./slices/userAccountSlice";
 
-export default configureStore({
+ const store = configureStore({
     reducer: {
-        accountSlice: userAccountSlice.reducer,
+        user: userAccountSlice.reducer,
     }
 })
 
-
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export default store;

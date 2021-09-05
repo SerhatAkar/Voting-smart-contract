@@ -12,19 +12,16 @@ import {Container, CssBaseline} from "@material-ui/core";
 import Header from "./Components/Header/Header";
 import VotingArea from "./Components/Container/VotingArea";
 import Footer from "./Components/Footer/Footer";
-import { positions } from '@material-ui/system';
+import {positions} from '@material-ui/system';
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import WelcomeView from "./VIews/WelcomeView";
+
 const votingContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
 declare const window: any;
 
 function App() {
-    const [votingContract, setVotingContract] = useState();
     const [proposals, setProposals] = useState();
-    const [proposalName, setProposalName] = useState("");
-
-    async function requestAccount() {
-        await window.ethereum.request({method: 'eth_requestAccounts'})
-    }
 
     async function getProposals() {
         if (typeof window.ethereum !== 'undefined') {
@@ -40,48 +37,29 @@ function App() {
         }
     }
 
-    async function setProposal() {
-
-    }
-
-    const sections = [
-        {title: 'Tutorials', url: '#'},
-        {title: 'See old votes', url: '#'},
-
-    ];
-
-
     return (
         <React.Fragment>
+            <Router>
             <Grid container className={"app1"} alignItems="stretch">
                 <Grid xs={12}>
                     <Welcome loopDuration={3000}/>
-                    <CssBaseline/>
                     <Grid item xs={12}>
-                        <Header title="Vote !" sections={sections}/>
+                        <Header/>
                     </Grid>
                 </Grid>
-                <Grid item xs={12}  style={{minHeight:"90%"}}>
+                <Grid item xs={12} style={{minHeight: "90%"}}>
                     <Grid container>
                         <main>
-                            <Grid xs={12} alignContent="center" >
-                                <VotingArea/>
-                                <button onClick={getProposals}> See the proposals !</button>
-                                {
-                                    !!proposals &&
-                                    <div> The currents proposals bytes32 are {JSON.stringify(proposals)}</div>
-                                }
-                                <input onChange={e => setProposalName(e.target.value)} placeholder="New proposal"
-                                       value={proposalName}/>
-                            </Grid>
-
+                                <Switch>
+                                    <Route exact path="/" component={WelcomeView}/>
+                                </Switch>
                         </main>
                     </Grid>
                 </Grid>
 
             </Grid>
             <Footer/>
-
+            </Router>
         </React.Fragment>
     );
 }

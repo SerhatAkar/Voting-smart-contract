@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
@@ -6,7 +6,14 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
-
+import {useAppDispatch, useAppSelector} from "../../State/hooks";
+import {Spin} from "antd";
+import * as wallet from "../../Services/Wallet"
+import * as session from "../../Services/Session/session"
+import {logOut, setDisplayId, signIn} from "../../State/slices/userAccountSlice";
+import {getWeb3} from "../../Services/Wallet/metamask";
+import ethereum from "../../Services/Wallet/ethereum";
+import {useHistory, withRouter} from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
     toolbar: {
         borderBottom: `1px solid ${theme.palette.divider}`,
@@ -24,19 +31,47 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-interface Props {
-    sections:
-        {
-            title: string,
-            url: string,
-        }[],
-
-    title: string,
-}
-
-export default function Header(props: Props) {
+export  function Header() {
+    const userId = useAppSelector((state) => state.user.id);
     const classes = useStyles();
-    const {sections, title} = props;
+    const [loading, startLoading] = React.useState<boolean>(false);
+    const dispatch = useAppDispatch();
+
+    const login = async () => {
+        if (loading) return;
+        startLoading(true);
+        try {
+            const waddr = await wallet.default.login()
+            session.upsertSessionUserId(waddr);
+            dispatch(signIn(waddr));
+            window.location.reload()
+        } catch (error) {
+            console.log(error);
+            logout();
+            startLoading(false);
+        }
+    };
+
+    const logout = () => {
+        startLoading(false);
+        if (!userId) return;
+        session.clearSession();
+        dispatch(logOut());
+        window.location.reload();
+    };
+
+    const handleAccountsChange = async (waddrs: string[]) => {
+        logout();
+        if (waddrs[0]) {
+            startLoading(true);
+            await login();
+        }
+    };
+
+    ethereum
+        ?.removeAllListeners("accountsChanged")
+        .on("accountsChanged", handleAccountsChange);
+
 
     return (
         <React.Fragment>
@@ -50,29 +85,40 @@ export default function Header(props: Props) {
                     noWrap
                     className={classes.toolbarTitle}
                 >
-                    {title}
+                    Voting app
                 </Typography>
+                {
+                    userId &&
+                    <Typography
+                        component="h6"
+                        variant="h6"
+                        color="primary"
+                        align="right"
+                        noWrap
+                        className={classes.toolbarSecondary}
+                    >
+                        Your id is {userId}
+                    </Typography>
+                }
                 <IconButton>
                     <SearchIcon/>
                 </IconButton>
-                <Button variant="outlined" size="small">
-                   Sign ( with Metamask only ! )
-                </Button>
+                {
+                    !userId ? (<Button variant="outlined" size="small" onClick={login}>
+                        Sign in ( with Metamask only ! )
+                        {loading && <Spin className="LoginButton__spinner" size="small"/>}
+                    </Button>) : (
+                        <Button variant="outlined" size="small" onClick={logout}>
+                            Sign out
+                        </Button>
+                    )
+                }
+
             </Toolbar>
             <Toolbar component="nav" variant="dense" className={classes.toolbarSecondary}>
-                {sections.map((section) => (
-                    <Link
-                        color="inherit"
-                        noWrap
-                        key={section.title}
-                        variant="body2"
-                        href={section.url}
-                        className={classes.toolbarLink}
-                    >
-                        {section.title}
-                    </Link>
-                ))}
             </Toolbar>
         </React.Fragment>
     );
 }
+
+export default Header;
