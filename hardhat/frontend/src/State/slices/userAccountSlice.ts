@@ -7,20 +7,24 @@ interface UserState {
 }
 
 const initialState: UserState = {
-    id: session.hasSession() ? session.loadSession()?.id : undefined,
-    displayId: session.hasSession() ? session.loadSession()?.id : undefined,
+    id : undefined,
+    displayId: undefined,
 }
+
+// const initialState: UserState = {
+//     id: session.hasSession() ? session.loadSession()?.id : undefined,
+//     displayId: session.hasSession() ? session.loadSession()?.id : undefined,
+// }
 export const userAccountSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        signIn: (state, action: PayloadAction<UserState>) => ({
-            ...state,
-            ...action.payload,
-        }),
-        logOut: (_state) => ({
-            ...initialState
-        }),
+        signIn(state, action: PayloadAction<string>){
+            state.id = action.payload
+        },
+        logOut (state) {
+            state.id = initialState.id
+        },
         setDisplayId: (state, action: PayloadAction<UserState>) => ({
             ...state,
             displayId: action.payload.toString(),

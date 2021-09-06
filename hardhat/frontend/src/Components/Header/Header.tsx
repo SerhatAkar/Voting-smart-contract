@@ -38,32 +38,26 @@ export  function Header() {
     const dispatch = useAppDispatch();
 
     const login = async () => {
-        if (loading) return;
-        startLoading(true);
         try {
             const waddr = await wallet.default.login()
             session.upsertSessionUserId(waddr);
             dispatch(signIn(waddr));
-            window.location.reload()
         } catch (error) {
             console.log(error);
             logout();
-            startLoading(false);
         }
     };
 
     const logout = () => {
-        startLoading(false);
-        if (!userId) return;
-        session.clearSession();
-        dispatch(logOut());
-        window.location.reload();
+            session.clearSession();
+            dispatch(logOut());
+            console.log(userId);
+
     };
 
     const handleAccountsChange = async (waddrs: string[]) => {
         logout();
         if (waddrs[0]) {
-            startLoading(true);
             await login();
         }
     };
