@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
 import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 pragma solidity >=0.7.0 <0.9.0;
 
-contract VotingContract {
+// Use onlyOwner for chairperson
+
+contract VotingContract is Ownable {
 
     struct Voter {
         uint weight; // weight is accumulated by delegation
