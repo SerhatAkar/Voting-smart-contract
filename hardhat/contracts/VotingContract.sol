@@ -8,133 +8,73 @@ pragma solidity >=0.7.0 <0.9.0;
 
 contract VotingContract is Ownable {
 
+    address public contractOwner;
+
+    Proposal[] public proposals;
+
     struct Voter {
-        uint weight; // weight is accumulated by delegation
-        bool voted;  // if true, that person already voted
-        address delegate; // person delegated to
+
+        bool dailyVote;  // if true, that person already voted
         uint vote;   // index of the voted proposal
     }
 
     struct Proposal {
-        // If you can limit the length to a certain number of bytes,
-        // always use one of bytes1 to bytes32 because they are much cheaper
-        bytes32 name;   // short name (up to 32 bytes)
-        uint voteCount; // number of accumulated votes
+        //        string id;
+        address ProposalOwner;
+        string name;
+        string description;
+        uint voteCount;
+        uint endTime;
+        //        uint endTime; // set the end time by the chairperson
     }
 
-    address public chairperson;
+    uint proposalsLength;
 
-    mapping(address => Voter) public voters;
-
-    Proposal[] public proposals;
-
-    /**
-     * @dev Create a new ballot to choose one of 'proposalNames'.
-     * @param proposalNames names of proposals
-     */
-    constructor(bytes32[] memory proposalNames){
-        chairperson = msg.sender;
-        voters[chairperson].weight = 1;
-
-        for (uint i = 0; i < proposalNames.length; i++) {
-
-            proposals.push(Proposal({
-            name : proposalNames[i],
-            voteCount : 0
-            }));
-        }
+    mapping(address => Voter) public voter;
+    mapping(Voter => proposals[]) public voterToProposals;
 
 
-    }
-    function getProposals() public view returns (bytes32){
-        console.log("dedans");
-        return proposals[0].name;
-    }
-    /**
-     * @dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'.
-     * @param voter address of voter
-     */
-    function giveRightToVote(address voter) public {
-        require(
-            msg.sender == chairperson,
-            "Only chairperson can give right to vote."
-        );
-        require(
-            !voters[voter].voted,
-            "The voter already voted."
-        );
-        require(voters[voter].weight == 0);
-        voters[voter].weight = 1;
+    // Check 3 conditions . TODO => improve dailyVote
+    modifier canVote(Proposal _proposal, address _voterAddress) {
+        require(checkIfVoterHasVoted(_voterAddress));
+        require(voter[_voterAddress].dailyVote <= 2);
+        require(_proposal.endTime > now);
+        _;
     }
 
-    /**
-     * @dev Delegate your vote to the voter 'to'.
-     * @param to address to which vote is delegated
-     */
-    function delegate(address to) public {
-        Voter storage sender = voters[msg.sender];
-        require(!sender.voted, "You already voted.");
-        require(to != msg.sender, "Self-delegation is disallowed.");
-
-        while (voters[to].delegate != address(0)) {
-            to = voters[to].delegate;
-
-            // We found a loop in the delegation, not allowed.
-            require(to != msg.sender, "Found loop in delegation.");
-        }
-        sender.voted = true;
-        sender.delegate = to;
-        Voter storage delegate_ = voters[to];
-        if (delegate_.voted) {
-            // If the delegate already voted,
-            // directly add to the number of votes
-            proposals[delegate_.vote].voteCount += sender.weight;
-        } else {
-            // If the delegate did not vote yet,
-            // add to her weight.
-            delegate_.weight += sender.weight;
-        }
+    function getProposalLeftTime(Proposal _proposal) external view returns(uint timeLeft) {
+        return proposals[_proposal].endTime;
     }
-
-    /**
-     * @dev Give your vote (including votes delegated to you) to proposal 'proposals[proposal].name'.
-     * @param proposal index of proposal in the proposals array
-     */
-    function vote(uint proposal) public {
-        Voter storage sender = voters[msg.sender];
-        require(sender.weight != 0, "Has no right to vote");
-        require(!sender.voted, "Already voted.");
-        sender.voted = true;
-        sender.vote = proposal;
-
-        // If 'proposal' is out of the range of the array,
-        // this will throw automatically and revert all
-        // changes.
-        proposals[proposal].voteCount += sender.weight;
-    }
-
-    /**
-     * @dev Computes the winning proposal taking all previous votes into account.
-     * @return winningProposal_ index of winning proposal in the proposals array
-     */
-    function winningProposal() public view
-    returns (uint winningProposal_)
-    {
-        uint winningVoteCount = 0;
-        for (uint p = 0; p < proposals.length; p++) {
-            if (proposals[p].voteCount > winningVoteCount) {
-                winningVoteCount = proposals[p].voteCount;
-                winningProposal_ = p;
+    // Check if the voter has already voted for a specific proposal.
+    function checkIfVoterHasVoted(address _voter) internal returns (bool result) {
+        Voter storage voter = voters[_voter];
+        for (uint i; i < voterToProposals[voter].length; i++) {
+            if (voterToProposals[voter].Proposal[i] == _proposal) {
+                return !result;
             }
         }
     }
-    /**
-     * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
-     * @return winnerName_ the name of the winner
-     */
-    function winnerName() public view
-    returns (bytes32 winnerName_)
-    {
-        winnerName_ = proposals[winningProposal()].name;
+
+    // Define the owner of the smart-contract.
+    constructor(bytes32[] memory proposalNames){
+        contractOwner = msg.sender;
+        voters[contractOwner].weight = 1;
     }
+
+    event ProposalCreated(Proposal _proposal);
+
+    function createProposal(string memory _name, string memory _description, uint endTime, address _chairperson) external {
+        Proposal newProposal = new Proposal(_chairperson, _name, _description, 0, endTime);
+        proposals.push(newProposal);
+        emit ProposalCreated(newProposal);
+    }
+
+    function vote(uint proposal) public canVote(msg.sender){
+        Voter storage sender = voters[msg.sender];
+        voterToProposals[sender].push(proposal);
+        //emit users information (vote list).
+        proposals[proposal].voteCount += 1;
+        sender.vote--;
+    }
+
 }
