@@ -1,3 +1,5 @@
+@import '~antd/dist/antd.css';
+
 .react-welcome-page .outer-container {
   background-color: lightslategrey;
   display: flex;

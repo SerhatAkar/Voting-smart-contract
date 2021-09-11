@@ -29,9 +29,11 @@ module.exports = {
       initialBaseFeePerGas: 0, // workaround from https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136 . Remove when that issue is closed.
     },
     ropsten: {
-      url: process.env.ROPSTEN_URL || "",
+      // TODO => Env !!!
+      url: "https://ropsten.infura.io/v3/597374acbde446ce905533e2a0789aea",
       accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : ["0x5956c0a06a70d735597e277216dc7677783c0ac197e8a58f4d08c0c4406c8302"
+        ],
     },
   },
   gasReporter: {
@@ -41,4 +43,5 @@ module.exports = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  paths: {artifacts: "./frontend/src/artifacts"}
 };

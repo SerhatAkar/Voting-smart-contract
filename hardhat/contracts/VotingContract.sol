@@ -10,11 +10,9 @@ contract VotingContract is Ownable {
 
     address public contractOwner;
 
-    Proposal[] public proposals;
-
     struct Voter {
 
-        bool dailyVote;  // if true, that person already voted
+        uint dailyVote;  // if true, that person already voted
         uint vote;   // index of the voted proposal
     }
 
@@ -27,51 +25,54 @@ contract VotingContract is Ownable {
         uint endTime;
         //        uint endTime; // set the end time by the chairperson
     }
-
+    Proposal[] public proposals;
     uint proposalsLength;
 
     mapping(address => Voter) public voter;
-    mapping(Voter => proposals[]) public voterToProposals;
+    mapping(address => Proposal[]) public voterToProposals;
 
 
     // Check 3 conditions . TODO => improve dailyVote
-    modifier canVote(Proposal _proposal, address _voterAddress) {
-        require(checkIfVoterHasVoted(_voterAddress));
+    modifier canVote(Proposal memory _proposal, address _voterAddress) {
+        require(checkIfVoterHasVoted(_voterAddress, _proposal));
         require(voter[_voterAddress].dailyVote <= 2);
-        require(_proposal.endTime > now);
+        require(_proposal.endTime > block.timestamp);
         _;
     }
 
-    function getProposalLeftTime(Proposal _proposal) external view returns(uint timeLeft) {
-        return proposals[_proposal].endTime;
+    function getProposalLeftTime(Proposal memory _proposal) external pure returns(uint timeLeft) {
+        return _proposal.endTime;
     }
     // Check if the voter has already voted for a specific proposal.
-    function checkIfVoterHasVoted(address _voter) internal returns (bool result) {
-        Voter storage voter = voters[_voter];
-        for (uint i; i < voterToProposals[voter].length; i++) {
-            if (voterToProposals[voter].Proposal[i] == _proposal) {
+    function checkIfVoterHasVoted(address _voter, Proposal memory _proposal) internal view returns (bool result) {
+        for (uint i; i < voterToProposals[_voter].length; i++) {
+            if (equals(_proposal, voterToProposals[_voter][i])) {
                 return !result;
             }
         }
     }
+    function equals(Proposal memory _first, Proposal storage _second) internal view returns (bool) {
+        // Just compare the output of hashing all fields packed
+        return(keccak256(abi.encodePacked(_first.name, _first.description, _first.ProposalOwner)) == keccak256(abi.encodePacked(_second.name, _second.description, _second.ProposalOwner)));
+    }
 
     // Define the owner of the smart-contract.
-    constructor(bytes32[] memory proposalNames){
+    constructor(){
         contractOwner = msg.sender;
-        voters[contractOwner].weight = 1;
     }
 
     event ProposalCreated(Proposal _proposal);
 
     function createProposal(string memory _name, string memory _description, uint endTime, address _chairperson) external {
-        Proposal newProposal = new Proposal(_chairperson, _name, _description, 0, endTime);
+        Proposal memory newProposal = Proposal(_chairperson, _name, _description, 0, endTime);
         proposals.push(newProposal);
+        voterToProposals[_chairperson].push(newProposal);
         emit ProposalCreated(newProposal);
     }
 
-    function vote(uint proposal) public canVote(msg.sender){
-        Voter storage sender = voters[msg.sender];
-        voterToProposals[sender].push(proposal);
+    function vote(uint proposal) public canVote( proposals[proposal], msg.sender){
+        Voter memory sender = voter[msg.sender];
+        voterToProposals[msg.sender].push(proposals[proposal]);
         //emit users information (vote list).
         proposals[proposal].voteCount += 1;
         sender.vote--;

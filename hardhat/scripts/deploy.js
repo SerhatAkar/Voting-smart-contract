@@ -7,7 +7,7 @@ async function main() {
     const names = await createBytes("SerhatAkar");
     console.log(names);
     const Voting = await hre.ethers.getContractFactory("VotingContract");
-    const VotingContract = await Voting.deploy([`${names}`]);
+    const VotingContract = await Voting.deploy();
     await VotingContract.deployed();
 
     console.log("Voting contract deployed at :", VotingContract.address);

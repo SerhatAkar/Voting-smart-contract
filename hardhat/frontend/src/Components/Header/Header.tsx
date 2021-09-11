@@ -8,12 +8,12 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import {useAppDispatch, useAppSelector} from "../../State/hooks";
 import {Spin} from "antd";
-import * as wallet from "../../Services/Wallet"
 import * as session from "../../Services/Session/session"
 import {logOut, setDisplayId, signIn} from "../../State/slices/userAccountSlice";
-import {getWeb3} from "../../Services/Wallet/metamask";
-import ethereum from "../../Services/Wallet/ethereum";
 import {useHistory, withRouter} from "react-router-dom";
+import {useEthers} from "@usedapp/core";
+
+
 const useStyles = makeStyles((theme) => ({
     toolbar: {
         borderBottom: `1px solid ${theme.palette.divider}`,
@@ -31,40 +31,29 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export  function Header() {
+export function Header() {
+
     const userId = useAppSelector((state) => state.user.id);
     const classes = useStyles();
     const [loading, startLoading] = React.useState<boolean>(false);
     const dispatch = useAppDispatch();
-
+    const {activateBrowserWallet, account} = useEthers();
     const login = async () => {
         try {
-            const waddr = await wallet.default.login()
-            session.upsertSessionUserId(waddr);
-            dispatch(signIn(waddr));
+            activateBrowserWallet();
+            account && session.upsertSessionUserId(account);
+            account && dispatch(signIn(account));
         } catch (error) {
             console.log(error);
-            logout();
+            await logout();
         }
     };
 
     const logout = () => {
-            session.clearSession();
-            dispatch(logOut());
-            console.log(userId);
-
+        session.clearSession();
+        dispatch(logOut());
+        console.log(userId);
     };
-
-    const handleAccountsChange = async (waddrs: string[]) => {
-        logout();
-        if (waddrs[0]) {
-            await login();
-        }
-    };
-
-    ethereum
-        ?.removeAllListeners("accountsChanged")
-        .on("accountsChanged", handleAccountsChange);
 
 
     return (
@@ -108,8 +97,6 @@ export  function Header() {
                     )
                 }
 
-            </Toolbar>
-            <Toolbar component="nav" variant="dense" className={classes.toolbarSecondary}>
             </Toolbar>
         </React.Fragment>
     );
