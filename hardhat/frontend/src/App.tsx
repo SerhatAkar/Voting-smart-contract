@@ -16,37 +16,42 @@ import {positions} from '@material-ui/system';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import WelcomeView from "./VIews/WelcomeView";
 import {Alert} from "antd";
-import {GetContractAddress} from "./hooks/contracts";
+import {GetContractOwnerAddress} from "./hooks/contracts";
 
-const votingContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-
-declare const window: any;
 
 function App() {
-    const  address = GetContractAddress();
+    const address = GetContractOwnerAddress();
     return (
         <React.Fragment>
             <Router>
-                <Welcome loopDuration={3000}/>
-                <Grid container className={"app1"} alignItems={"stretch"}>
+                <Welcome loopDuration={1000}/>
+                <Grid container xs={12}
+                      style={{ height: "100%"}} className={"app1"}>
+
                     <Grid item xs={12}>
                         <Header/>
                         {
-                           address && <Alert message={`Contract is deployed on the Ropsten testnet at => ${address} ` }type="success" showIcon/>
+                            address &&
+                            <Alert message={`Contract is deployed on the Ropsten testnet and owner is ${address} `}
+                                   type="success" showIcon/>
                         }
                     </Grid>
-                    <Grid item xs={12} style={{minHeight: "90%"}}>
-                        <Grid container>
-                            <main>
+                    <Grid item xs={12}>
+
+
                                 <Switch>
                                     <Route exact path="/" component={WelcomeView}/>
                                 </Switch>
-                            </main>
-                        </Grid>
+
+
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Footer />
                     </Grid>
 
+
                 </Grid>
-                <Footer/>
+
             </Router>
         </React.Fragment>
     );

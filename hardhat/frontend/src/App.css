@@ -1,5 +1,9 @@
 @import '~antd/dist/antd.css';
 
+#root {
+  margin: 0;
+  height: 100%;
+}
 .react-welcome-page .outer-container {
   background-color: lightslategrey;
   display: flex;
@@ -83,7 +87,7 @@
 }
 .app1 {
   background-color: whitesmoke;
-  height: 100vh;
+
 }
 
 

@@ -33,26 +33,21 @@ const useStyles = makeStyles((theme) => ({
 
 export function Header() {
 
-    const userId = useAppSelector((state) => state.user.id);
+    // const userId = useAppSelector((state) => state.user.id);
     const classes = useStyles();
     const [loading, startLoading] = React.useState<boolean>(false);
     const dispatch = useAppDispatch();
-    const {activateBrowserWallet, account} = useEthers();
-    const login = async () => {
-        try {
-            activateBrowserWallet();
+    const {activateBrowserWallet, account, deactivate} = useEthers();
+    const login = () => {
+            activateBrowserWallet(onerror=> logout());
             account && session.upsertSessionUserId(account);
             account && dispatch(signIn(account));
-        } catch (error) {
-            console.log(error);
-            await logout();
-        }
     };
 
     const logout = () => {
+        deactivate();
         session.clearSession();
         dispatch(logOut());
-        console.log(userId);
     };
 
 
@@ -71,7 +66,7 @@ export function Header() {
                     Voting app
                 </Typography>
                 {
-                    userId &&
+                    account &&
                     <Typography
                         component="h6"
                         variant="h6"
@@ -80,14 +75,14 @@ export function Header() {
                         noWrap
                         className={classes.toolbarSecondary}
                     >
-                        Your id is {userId}
+                        Your id is {account}
                     </Typography>
                 }
                 <IconButton>
                     <SearchIcon/>
                 </IconButton>
                 {
-                    !userId ? (<Button variant="outlined" size="small" onClick={login}>
+                    !account ? (<Button variant="outlined" size="small" onClick={login}>
                         Sign in ( with Metamask only ! )
                         {loading && <Spin className="LoginButton__spinner" size="small"/>}
                     </Button>) : (
