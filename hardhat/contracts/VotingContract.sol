@@ -63,10 +63,10 @@ contract VotingContract is Ownable {
 
     event ProposalCreated(Proposal _proposal);
 
-    function createProposal(string memory _name, string memory _description, uint endTime, address _chairperson) external {
-        Proposal memory newProposal = Proposal(_chairperson, _name, _description, 0, endTime);
+    function createProposal(string memory _name, string memory _description, uint endTime) external {
+        Proposal memory newProposal = Proposal(msg.sender, _name, _description, 0,0);
         proposals.push(newProposal);
-        voterToProposals[_chairperson].push(newProposal);
+        voterToProposals[msg.sender].push(newProposal);
         emit ProposalCreated(newProposal);
     }
 

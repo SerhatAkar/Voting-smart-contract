@@ -27,7 +27,6 @@ function App() {
                 <Welcome loopDuration={1000}/>
                 <Grid container xs={12}
                       style={{ height: "100%"}} className={"app1"}>
-
                     <Grid item xs={12}>
                         <Header/>
                         {
@@ -36,20 +35,14 @@ function App() {
                                    type="success" showIcon/>
                         }
                     </Grid>
-                    <Grid item xs={12}>
-
-
+                    <Grid item xs={12} style={{minHeight:"80vh", marginBottom:"10vh"}}>
                                 <Switch>
                                     <Route exact path="/" component={WelcomeView}/>
                                 </Switch>
-
-
                     </Grid>
                     <Grid item xs={12}>
                         <Footer />
                     </Grid>
-
-
                 </Grid>
 
             </Router>

@@ -14,6 +14,7 @@ import {teal, grey, green} from "@material-ui/core/colors";
 import {useAppSelector} from "../../State/hooks";
 import {CreateVote, Vote} from "../../hooks/contracts";
 import {useEthers} from "@usedapp/core";
+import {Modal} from "antd";
 
 const styles = () => ({
     root: {
@@ -34,14 +35,14 @@ const styles = () => ({
         padding: 20,
         alignItems: "center",
         borderColor: green[200],
-        borderBottomWidth:3
+        borderBottomWidth: 3
 
     },
     mainContent: {
         padding: 40
     },
     secondaryContainer: {
-        padding: "20px 25px",
+
         backgroundColor: grey[200],
 
     }
@@ -49,13 +50,13 @@ const styles = () => ({
 
 
 function NewVoteDialog(props: any) {
+
     const account = useEthers();
+    const {state, send } = CreateVote();
     const {classes, open, onClose} = props;
-
-
     const initialForm: Vote = {
-        name: "",
-        description: "",
+        _name: "",
+        _description: "",
     };
     const [voteForm, setVoteForm] = useState<Vote>(initialForm);
 
@@ -67,15 +68,31 @@ function NewVoteDialog(props: any) {
             ...voteForm,
             [setName]: value
         })
+        console.log(voteForm);
     }
 
-    const submitVote = () => {
-
-        CreateVote(voteForm).then();
+    function  submitVote() {
+       send(voteForm._name, voteForm._description, 5253535).then(value => {
+           console.log(state);
+                console.log("Okay" + value);
+                // window.location.reload();
+            }
+        ).catch(
+            err => {
+                console.log(err);
+                // showAlertModal();
+            }
+        );
     }
+
+    const showAlertModal = () => {
+        return <Modal title="Error"
+                      visible onOk={window.location.reload}>
+            <Typography> There was an error submitting your proposal, please try again shortly. </Typography>
+        </Modal>
+    }
+
     return (
-
-
         <form onSubmit={submitVote}>
             {!!account.account &&
             <Dialog
@@ -88,7 +105,7 @@ function NewVoteDialog(props: any) {
                 <DialogContent className={classes.padding}>
                     <Grid container xs={12}>
                         <Grid item xs={12}>
-                            <Grid container direction="row"  xs={12} className={classes.mainHeader}>
+                            <Grid container direction="row" xs={12} className={classes.mainHeader}>
                                 <Grid item xs={8}>
                                     <Typography className={classes.primaryColor} variant="h5">
                                         New vote proposal
@@ -124,8 +141,8 @@ function NewVoteDialog(props: any) {
                                         label="Proposal"
                                         fullWidth
                                         variant="outlined"
-                                        id="name"
-                                        name="name"
+                                        id="_name"
+                                        name="_name"
                                         margin="dense"
                                         placeholder={"Proposal name"}
                                         onChange={handleInputChange}
@@ -145,8 +162,8 @@ function NewVoteDialog(props: any) {
                                         rows="5"
                                         variant="outlined"
                                         label="Additional Info"
-                                        name="description"
-                                        id="description"
+                                        name="_description"
+                                        id="_description"
                                         onChange={handleInputChange}
                                     />
                                 </Grid>
@@ -164,7 +181,7 @@ function NewVoteDialog(props: any) {
                                             </IconButton>
                                         </Grid>
                                         <Grid item>
-                                            <Button variant={"outlined"} style={{borderColor: "green"}}>Start the vote
+                                            <Button  onClick={submitVote} variant={"outlined"} style={{borderColor: "green"}}>Start the vote
                                                 !</Button>
                                         </Grid>
                                     </Grid>
@@ -176,8 +193,7 @@ function NewVoteDialog(props: any) {
             </Dialog>}
 
         </form>
-
     );
-
 }
+
 export default withStyles(styles)(NewVoteDialog);

@@ -5,12 +5,12 @@ import {useContractCall, useContractFunction, useSendTransaction} from "@usedapp
 
 
 const votingInterface = new utils.Interface(VotingContract.abi);
-const votingContractAddress = '0x6b817AB86198CA5631a61c8060B723CDBF040a3E';
+const votingContractAddress = '0x9c515A1f6A168896eF40876Be232A1305a83cFc2';
 const contract = new Contract(votingContractAddress, votingInterface);
 
 export interface Vote{
-    name: string,
-    description: string,
+    _name: string,
+    _description: string,
 }
 export function GetContractOwnerAddress(){
   const contractAddress = useContractCall({
@@ -21,8 +21,11 @@ export function GetContractOwnerAddress(){
   });
   return contractAddress;
 }
-
-export function CreateVote(voteProposal : Vote){
-    const { state, send } = useContractFunction(contract, 'vote')
-    return send(voteProposal);
+export function useContractMethod(methodName: string) {
+    const {state, send} = useContractFunction(contract, methodName, {});
+    return {state, send};
 }
+
+export const  CreateVote = () => {
+  return useContractFunction(contract, 'createProposal')
+};

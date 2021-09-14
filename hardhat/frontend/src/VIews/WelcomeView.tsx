@@ -24,28 +24,33 @@ function WelcomeView() {
     }
     const handleClose = () => setVoteDialog(false);
     console.log(account);
+
     return (
-            <Grid container spacing={5}   xs={12}   >
-                {!!account.account && <React.Fragment>
-                    <Grid item xs={12}>
-                        <VoteCard/>
-                    </Grid>
-                    <Grid item xs={12} alignItems={"flex-end"}>
-                        <Grid container  xs={12} direction={"row"} alignItems={"center"}>
-                            <Grid item xs={6} justify={"center"} style={{paddingBottom:10}}>
-                                {voteDialog && <NewVoteDialog onClose={() => handleClose}/>}
-                                <Button onClick={newVote} variant="outlined" color="primary" href="#outlined-buttons">
-                                    New vote
-                                </Button>
+        <Grid container xs={12} style={{minHeight: "80vh"}}>
+            {!!account.account && <React.Fragment>
+                <Grid item xs={12}>
+                    <Paper style={{margin: "10vh", backgroundColor: "whitesmoke", height: "100%"}}
+                           elevation={0}>
+                        <Grid container xs={12} style={{ height: "100%"}} >
+                            <Grid item xs={12}>
+                                <VoteCard/>
                             </Grid>
-                            <Grid item xs={4}>
-                                <Pagination count={10} variant="outlined"/>
+                            <Grid item xs={12} alignItems={"flex-end"}>
+                                <Grid container xs={12} style={{textAlign:"center"}}direction={"row"}>
+                                    <Grid item xs={12} alignContent={"center"} style={{paddingBottom: 10}}>
+                                        {voteDialog && <NewVoteDialog onClose={() => handleClose}/>}
+                                        <Button onClick={newVote} variant="outlined" color="primary">
+                                            New vote
+                                        </Button>
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </React.Fragment>
-                }
-            </Grid>
+                    </Paper>
+                </Grid>
+            </React.Fragment>
+            }
+        </Grid>
 
     );
 }

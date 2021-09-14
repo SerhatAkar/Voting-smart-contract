@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
     toolbarTitle: {
         flex: 1,
+        marginLeft:"6vh"
     },
     toolbarSecondary: {
         justifyContent: 'space-between',
@@ -59,11 +60,10 @@ export function Header() {
                     component="h2"
                     variant="h5"
                     color="inherit"
-                    align="center"
                     noWrap
                     className={classes.toolbarTitle}
                 >
-                    Voting app
+                    A voting smart contract
                 </Typography>
                 {
                     account &&
