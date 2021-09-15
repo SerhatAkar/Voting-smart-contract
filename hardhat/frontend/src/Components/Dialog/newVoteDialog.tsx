@@ -52,13 +52,14 @@ const styles = () => ({
 function NewVoteDialog(props: any) {
 
     const account = useEthers();
-    const {state, send } = CreateVote();
+    const {state, send} = CreateVote();
     const {classes, open, onClose} = props;
     const initialForm: Vote = {
         _name: "",
         _description: "",
     };
     const [voteForm, setVoteForm] = useState<Vote>(initialForm);
+    const [openModal, setOpenModal] = useState<boolean>(true);
 
     function handleInputChange(e: any) {
         const target = e.target;
@@ -71,25 +72,13 @@ function NewVoteDialog(props: any) {
         console.log(voteForm);
     }
 
-    function  submitVote() {
-       send(voteForm._name, voteForm._description, 5253535).then(value => {
-           console.log(state);
-                console.log("Okay" + value);
-                // window.location.reload();
-            }
-        ).catch(
+    async function submitVote() {
+        setOpenModal(false);
+        await send(voteForm._name, voteForm._description, 5253535).catch(
             err => {
                 console.log(err);
-                // showAlertModal();
             }
         );
-    }
-
-    const showAlertModal = () => {
-        return <Modal title="Error"
-                      visible onOk={window.location.reload}>
-            <Typography> There was an error submitting your proposal, please try again shortly. </Typography>
-        </Modal>
     }
 
     return (
@@ -99,7 +88,7 @@ function NewVoteDialog(props: any) {
                 className={classes.root}
                 fullWidth
                 maxWidth="md"
-                open={true}
+                open={openModal}
                 onClose={() => props.onClose}
             >
                 <DialogContent className={classes.padding}>
@@ -147,11 +136,6 @@ function NewVoteDialog(props: any) {
                                         placeholder={"Proposal name"}
                                         onChange={handleInputChange}
                                     >
-                                        {/*{countries.map(option => (*/}
-                                        {/*    <MenuItem key={option.value} value={option.value}>*/}
-                                        {/*        {option.label}*/}
-                                        {/*    </MenuItem>*/}
-                                        {/*))}*/}
                                     </TextField>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -181,7 +165,8 @@ function NewVoteDialog(props: any) {
                                             </IconButton>
                                         </Grid>
                                         <Grid item>
-                                            <Button  onClick={submitVote} variant={"outlined"} style={{borderColor: "green"}}>Start the vote
+                                            <Button onClick={submitVote} variant={"outlined"}
+                                                    style={{borderColor: "green"}}>Start the vote
                                                 !</Button>
                                         </Grid>
                                     </Grid>

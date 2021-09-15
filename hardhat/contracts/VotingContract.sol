@@ -78,4 +78,5 @@ contract VotingContract is Ownable {
         sender.vote--;
     }
 
+
 }
