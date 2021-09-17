@@ -42,33 +42,37 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
 
 }
+interface Props  {
+    name: string,
+    description : string,
+    owner: string,
+}
 
-export default function VoteCard() {
+export default function VoteCard(props : Props) {
     const classes = useStyles();
+
     return (
         <Card className={classes.root}>
             <CardHeader
                 avatar={
                     <Avatar aria-label="recipe" className={classes.avatar}>
-                        // PROPOSER NAME / ID
+                        {props.owner}
                     </Avatar>
                 }
                 action={
                     <IconButton aria-label="settings">
-                        // REPORT
                     </IconButton>
                 }
-                title="Vote title"
-                subheader="Limit title : todo"
+                title={props.name}
+                subheader={`This proposal is registered in the blockchain. It was registered by ${props.owner}`}
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    Vote explanation
+                    {props.description}
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
-                    // Vote
                     <FavoriteIcon/>
                 </IconButton>
                 <IconButton aria-label="share">

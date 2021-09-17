@@ -72,8 +72,8 @@
       ]
     },
     "/home/hemesky/WebstormProjects/Voting-smart-contract/hardhat/contracts/VotingContract.sol": {
-      "lastModificationDate": 1631642189371,
-      "contentHash": "bf3a9c0f2bc8f1ffc8896902913d0e4d",
+      "lastModificationDate": 1631789794153,
+      "contentHash": "9388290c0f199e5668a650afedc9c775",
       "sourceName": "contracts/VotingContract.sol",
       "solcConfig": {
         "version": "0.8.4",

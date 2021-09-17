@@ -25,6 +25,7 @@ contract VotingContract is Ownable {
         uint endTime;
         //        uint endTime; // set the end time by the chairperson
     }
+
     Proposal[] public proposals;
     uint proposalsLength;
 
@@ -40,7 +41,11 @@ contract VotingContract is Ownable {
         _;
     }
 
-    function getProposalLeftTime(Proposal memory _proposal) external pure returns(uint timeLeft) {
+    function getProposals() external view returns (Proposal[] memory){
+        return proposals;
+    }
+
+    function getProposalLeftTime(Proposal memory _proposal) external pure returns (uint timeLeft) {
         return _proposal.endTime;
     }
     // Check if the voter has already voted for a specific proposal.
@@ -51,9 +56,10 @@ contract VotingContract is Ownable {
             }
         }
     }
+
     function equals(Proposal memory _first, Proposal storage _second) internal view returns (bool) {
         // Just compare the output of hashing all fields packed
-        return(keccak256(abi.encodePacked(_first.name, _first.description, _first.ProposalOwner)) == keccak256(abi.encodePacked(_second.name, _second.description, _second.ProposalOwner)));
+        return (keccak256(abi.encodePacked(_first.name, _first.description, _first.ProposalOwner)) == keccak256(abi.encodePacked(_second.name, _second.description, _second.ProposalOwner)));
     }
 
     // Define the owner of the smart-contract.
@@ -64,13 +70,13 @@ contract VotingContract is Ownable {
     event ProposalCreated(Proposal _proposal);
 
     function createProposal(string memory _name, string memory _description, uint endTime) external {
-        Proposal memory newProposal = Proposal(msg.sender, _name, _description, 0,0);
+        Proposal memory newProposal = Proposal(msg.sender, _name, _description, 0, 0);
         proposals.push(newProposal);
         voterToProposals[msg.sender].push(newProposal);
         emit ProposalCreated(newProposal);
     }
 
-    function vote(uint proposal) public canVote( proposals[proposal], msg.sender){
+    function vote(uint proposal) public canVote(proposals[proposal], msg.sender) {
         Voter memory sender = voter[msg.sender];
         voterToProposals[msg.sender].push(proposals[proposal]);
         //emit users information (vote list).

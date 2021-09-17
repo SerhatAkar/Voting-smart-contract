@@ -8,7 +8,6 @@ export default class VotingArea extends React.Component {
     render() {
         return (
             <Grid xs={12}>
-                <VoteCard/>
             </Grid>
         );
     }

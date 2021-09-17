@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
     toolbarTitle: {
         flex: 1,
-        marginLeft:"6vh"
+        marginLeft: "6vh"
     },
     toolbarSecondary: {
         justifyContent: 'space-between',
@@ -40,9 +40,9 @@ export function Header() {
     const dispatch = useAppDispatch();
     const {activateBrowserWallet, account, deactivate} = useEthers();
     const login = () => {
-            activateBrowserWallet(onerror=> logout());
-            account && session.upsertSessionUserId(account);
-            account && dispatch(signIn(account));
+        activateBrowserWallet(onerror => logout());
+        account && session.upsertSessionUserId(account);
+        account && dispatch(signIn(account));
     };
 
     const logout = () => {
