@@ -5,10 +5,10 @@ import InnerContainer from '../Components/InnerContainer/InnerContainer';
 import Logo from '../Components/Image/Image';
 import LogoText from '../Components/LogoText/LogoText';
 import votepng from '../Components/Image/vote.png';
-import Carousel from "react-multi-carousel";
+import {Carousel} from 'react-responsive-carousel';
 import "react-multi-carousel/lib/styles.css";
 import {
-    Button,
+    Button, Card,
     Dialog,
     DialogActions,
     DialogContent,
@@ -29,6 +29,9 @@ import {contract, EventHandler, GetProposals} from "../hooks/contracts";
 import Typography from "@material-ui/core/Typography";
 import {Modal} from "antd";
 import PaginationWithStyles from "material-ui-flat-pagination";
+import Slider from "react-slick";
+import Particles from "react-tsparticles";
+import BackgroundAnimation from "../Components/Container/BackgroundAnimation";
 
 const responsive = {
     superLargeDesktop: {
@@ -74,10 +77,19 @@ function WelcomeView() {
         window.location.reload();
     }
     const rowsPerPage = 3;
-
+    const sliderSettings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+    };
 
     return (
-        <Grid container xs={12} style={{minHeight: "80vh"}}>
+        <Grid container xs={12} style={{height: "80vh"}} id={"tsparticles"}>
+            <Grid item>
+                <BackgroundAnimation/>
+            </Grid>
             <Dialog
                 open={modal}
                 onClose={window.location.reload}
@@ -96,52 +108,48 @@ function WelcomeView() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            {!!account && <React.Fragment>
-                <Grid item xs={12}>
-                    <Grid container xs={12} alignItems={"center"} style={{height: "80vh"}}>
-                        <Grid item xs={12}>
-                                    {proposals && <Carousel
-                                        swipeable={false}
-                                        draggable={false}
-                                        responsive={responsive}
-                                        ssr={true} // means to render carousel on server-side.
-                                        autoPlaySpeed={1000}
-                                        keyBoardControl={true}
-                                        customTransition="all .5"
-                                        transitionDuration={500}
 
-                                        removeArrowOnDeviceType={["tablet", "mobile"]}
-                                        renderButtonGroupOutside
-                                    >
 
-                                        {proposals?.map(prop => prop?.map((value: { ProposalOwner: string; name: string, description: string, owner: string }) =>
+            <Grid item xs={12}>
 
-                                               <Grid item xs={12}>
-
+                <Grid container xs={12} alignItems={"center"} style={{height: "80vh"}}>
+                    {!!account ? <React.Fragment>
+                            <Grid item xs={10} style={{paddingLeft: "28vh"}}>
+                                <Slider {...sliderSettings}>
+                                    {proposals?.map(prop => prop?.map((value: { ProposalOwner: string; name: string, description: string, owner: string }, index: number) => {
+                                        return <Grid item xs={12} style={{padding: "40px"}}>
                                             <VoteCard name={value.name} description={value.description}
-                                                          owner={value.ProposalOwner}/>
-                                               </Grid>
-                                        ))}
-
-                                    </Carousel>
-                                    }
-                                </Grid>
-                        <Grid item xs={12} alignItems={"flex-end"}>
-                            <Grid container xs={12} style={{textAlign: "center"}} direction={"row"}>
-                                <Grid item xs={12} alignContent={"center"} style={{paddingBottom: 10}}>
-                                    {voteDialog && <NewVoteDialog onClose={() => handleClose}/>}
-                                    <Button onClick={newVote} variant="outlined" color="primary">
-                                        New vote
-                                    </Button>
+                                                      owner={value.ProposalOwner}/>
+                                        </Grid>
+                                    }))}
+                                </Slider>
+                            </Grid>
+                            <Grid item xs={2} alignItems={"flex-end"}>
+                                <Grid container xs={12} style={{textAlign: "center"}} direction={"row"}>
+                                    <Grid item xs={12} alignContent={"center"} style={{paddingBottom: 10}}>
+                                        {voteDialog && <NewVoteDialog onClose={() => handleClose}/>}
+                                        <Button onClick={newVote} variant="outlined" color="primary">
+                                            New vote
+                                        </Button>
+                                    </Grid>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </React.Fragment>
-            }
-        </Grid>
+                        </React.Fragment> :
+                        <Grid item xs={12}  style={{padding: "30vh", minHeight:"80vh"}}>
 
+                            <Paper>
+                                <Typography variant="h5" component="h3">
+                                    This is a sheet of paper.
+                                </Typography>
+                                <Typography component="p">Paper can be used to build surface or other elements for your application.</Typography>
+                            </Paper>
+
+                        </Grid>
+                    }
+                    </Grid>
+
+            </Grid>
+        </Grid>
     );
 }
 

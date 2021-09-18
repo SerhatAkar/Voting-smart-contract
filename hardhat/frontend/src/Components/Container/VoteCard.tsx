@@ -18,6 +18,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        backgroundColor:"#d5e4f2",
         maxWidth: 345,
     },
     media: {
@@ -52,7 +53,7 @@ export default function VoteCard(props : Props) {
     const classes = useStyles();
 
     return (
-        <Card className={classes.root}>
+        <Card className={classes.root} elevation={30}>
             <CardHeader
                 avatar={
                     <Avatar aria-label="recipe" className={classes.avatar}>
