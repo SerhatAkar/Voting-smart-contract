@@ -20,7 +20,9 @@
   height: 100%;
   width: 100%;
 }
-
+.ant-picker-dropdown{
+  z-index: 10000 !important;
+}
 .react-welcome-page .moveOn {
   background-color: whitesmoke;
   position: fixed;

@@ -1,14 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import Container from '../Components/Container/Container';
-import OuterContainer from '../Components/OuterContainer/OuterContainer';
-import InnerContainer from '../Components/InnerContainer/InnerContainer';
-import Logo from '../Components/Image/Image';
-import LogoText from '../Components/LogoText/LogoText';
-import votepng from '../Components/Image/vote.png';
-import {Carousel} from 'react-responsive-carousel';
-import "react-multi-carousel/lib/styles.css";
+import React, {useState} from 'react';
 import {
-    Button, Card,
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
@@ -17,46 +9,20 @@ import {
     Grid,
     Paper
 } from "@material-ui/core";
-import {useAppSelector} from "../State/hooks";
-import {connect} from "react-redux";
-import store from "../State";
 import VoteCard from "../Components/Container/VoteCard";
-import {PlusOneRounded} from "@material-ui/icons";
 import NewVoteDialog from "../Components/Dialog/newVoteDialog";
-import Pagination from '@material-ui/lab/Pagination';
 import {useEthers} from "@usedapp/core";
-import {contract, CreateVote, EventHandler, GetProposals, Vote} from "../hooks/contracts";
+import {EventHandler, GetProposals, Vote} from "../hooks/contracts";
 import Typography from "@material-ui/core/Typography";
-import {Modal, notification} from "antd";
-import PaginationWithStyles from "material-ui-flat-pagination";
+import {notification} from "antd";
 import Slider from "react-slick";
-import Particles from "react-tsparticles";
 import BackgroundAnimation from "../Components/Container/BackgroundAnimation";
-
-
-const responsive = {
-    superLargeDesktop: {
-        // the naming can be any, depends on you.
-        breakpoint: {max: 4000, min: 3000},
-        items: 5
-    },
-    desktop: {
-        breakpoint: {max: 3000, min: 1024},
-        items: 3
-    },
-    tablet: {
-        breakpoint: {max: 1024, min: 464},
-        items: 2
-    },
-    mobile: {
-        breakpoint: {max: 464, min: 0},
-        items: 1
-    }
-};
+import CustomDatePicker from "../Components/CustomPicker/customDatePicker";
+import {Transaction} from "ethers/lib/ethers";
 
 function WelcomeView() {
 
-    const {account, active} = useEthers();
+    const {account} = useEthers();
     const [modalText, setModalText] = useState("Modal text");
     const [modal, setModal] = useState<boolean>(false);
     const proposals = GetProposals();
@@ -65,17 +31,15 @@ function WelcomeView() {
         setModalText("A new vote has been created  (it might be yours) !");
         setModal(true);
     }))
-    const [api, contextHolder] = notification.useNotification();
     const openNotification = (name: string, description: string) => {
         notification.success({
             message: name,
             description: description,
             placement: "bottomRight",
+            duration: 15
         })
-
     };
     const {state, send} = Vote();
-    const [pageNumber, setPageNumber] = useState(0);
     const [voteDialog, setVoteDialog] = useState(false);
     const newVote = () => {
         console.log(pLength);
@@ -97,9 +61,7 @@ function WelcomeView() {
     };
 
     async function vote(proposal: number) {
-        await send(proposal).then(
-            event => openNotification("Success", "Your vote has been taken into account !")
-        ).catch(error => {
+        await send(proposal).finally(() => state.status == "Success" && openNotification("Success", "Your vote has been taken into account !")).catch(error => {
             setModalText("An error has occured, please try again later")
             setModal(true)
         })

@@ -17,6 +17,7 @@ export const contract = new Contract(votingContractAddress, votingInterface);
 export interface Vote {
     _name: string,
     _description: string,
+    _endTime: number,
 }
 
 export function GetContractOwnerAddress() {

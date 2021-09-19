@@ -15,10 +15,12 @@ import {useAppSelector} from "../../State/hooks";
 import {CreateVote, Vote} from "../../hooks/contracts";
 import {useEthers} from "@usedapp/core";
 import {Modal} from "antd";
+import CustomDatePicker from "../CustomPicker/customDatePicker";
 
 const styles = () => ({
     root: {
-        flexGrow: 1
+        flexGrow: 1,
+
     },
     primaryColor: {
         color: teal[500]
@@ -28,7 +30,7 @@ const styles = () => ({
     },
 
     padding: {
-        padding: 0
+        padding: 4
     },
     mainHeader: {
         backgroundColor: grey[100],
@@ -57,6 +59,7 @@ function NewVoteDialog(props: any) {
     const initialForm: Vote = {
         _name: "",
         _description: "",
+        _endTime: 0,
     };
     const [voteForm, setVoteForm] = useState<Vote>(initialForm);
     const [openModal, setOpenModal] = useState<boolean>(true);
@@ -150,6 +153,9 @@ function NewVoteDialog(props: any) {
                                         id="_description"
                                         onChange={handleInputChange}
                                     />
+                                </Grid>
+                                <Grid item xs={12} >
+                                <CustomDatePicker />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Grid container direction="row" justify={"center"} spacing={2}
