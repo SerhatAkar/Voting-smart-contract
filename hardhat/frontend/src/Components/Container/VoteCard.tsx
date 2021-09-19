@@ -15,11 +15,12 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import {Grid} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
         backgroundColor:"#d5e4f2",
-        maxWidth: 345,
+        maxWidth: 600,
     },
     media: {
         height: 0,
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
         transform: 'rotate(180deg)',
     },
     avatar: {
-        backgroundColor: red[500],
+        backgroundColor: "darkcyan" ,
     },
 }));
 
@@ -65,13 +66,14 @@ export default function VoteCard(props : Props) {
                     </IconButton>
                 }
                 title={props.name}
-                subheader={`This proposal was created by ${props.owner}`}
+                subheader={`Creator :  ${props.owner}`}
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
                     {props.description}
                 </Typography>
             </CardContent>
+            <Grid container direction={"row"} justifyContent={"center"}>
             <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon/>
@@ -80,6 +82,7 @@ export default function VoteCard(props : Props) {
                     <ShareIcon/>
                 </IconButton>
             </CardActions>
+            </Grid>
         </Card>
     );
 }
