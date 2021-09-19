@@ -65,7 +65,7 @@ export default function VoteCard(props : Props) {
                     </IconButton>
                 }
                 title={props.name}
-                subheader={`This proposal is registered in the blockchain. It was registered by ${props.owner}`}
+                subheader={`This proposal was created by ${props.owner}`}
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
