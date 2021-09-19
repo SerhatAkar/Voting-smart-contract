@@ -78,7 +78,7 @@ export function Header() {
                         Your id is {account}
                     </Typography>
                 }
-                <IconButton>
+                <IconButton onClick={() => {window.open("https://ropsten.etherscan.io/address/"+account, "_blank")}}>
                     <SearchIcon/>
                 </IconButton>
                 {

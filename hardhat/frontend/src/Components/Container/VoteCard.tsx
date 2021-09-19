@@ -16,11 +16,14 @@ import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {Grid} from "@material-ui/core";
+import {Badge} from "antd";
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
         backgroundColor:"#d5e4f2",
         maxWidth: 600,
+        minHeight: 250,
     },
     media: {
         height: 0,
@@ -48,12 +51,15 @@ interface Props  {
     name: string,
     description : string,
     owner: string,
+    voteCount : number,
+    onVote :  () => void,
 }
 
 export default function VoteCard(props : Props) {
     const classes = useStyles();
 
     return (
+        <Badge.Ribbon text={` ${props.voteCount} votes`} >
         <Card className={classes.root} elevation={30}>
             <CardHeader
                 avatar={
@@ -75,14 +81,15 @@ export default function VoteCard(props : Props) {
             </CardContent>
             <Grid container direction={"row"} justifyContent={"center"}>
             <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
+                <IconButton aria-label="add to favorites" onClick={props.onVote}>
                     <FavoriteIcon/>
                 </IconButton>
-                <IconButton aria-label="share">
-                    <ShareIcon/>
-                </IconButton>
+                {/*<IconButton aria-label="share">*/}
+                {/*    <ShareIcon/>*/}
+                {/*</IconButton>*/}
             </CardActions>
             </Grid>
         </Card>
+        </Badge.Ribbon>
     );
 }

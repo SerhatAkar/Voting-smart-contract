@@ -25,13 +25,14 @@ import {PlusOneRounded} from "@material-ui/icons";
 import NewVoteDialog from "../Components/Dialog/newVoteDialog";
 import Pagination from '@material-ui/lab/Pagination';
 import {useEthers} from "@usedapp/core";
-import {contract, EventHandler, GetProposals} from "../hooks/contracts";
+import {contract, CreateVote, EventHandler, GetProposals, Vote} from "../hooks/contracts";
 import Typography from "@material-ui/core/Typography";
-import {Modal} from "antd";
+import {Modal, notification} from "antd";
 import PaginationWithStyles from "material-ui-flat-pagination";
 import Slider from "react-slick";
 import Particles from "react-tsparticles";
 import BackgroundAnimation from "../Components/Container/BackgroundAnimation";
+
 
 const responsive = {
     superLargeDesktop: {
@@ -56,13 +57,24 @@ const responsive = {
 function WelcomeView() {
 
     const {account, active} = useEthers();
+    const [modalText, setModalText] = useState("Modal text");
     const [modal, setModal] = useState<boolean>(false);
     const proposals = GetProposals();
     const pLength = proposals && Object.keys(proposals[0]).length;
     EventHandler("ProposalCreated", ((proposal: any) => {
+        setModalText("A new vote has been created  (it might be yours) !");
         setModal(true);
     }))
+    const [api, contextHolder] = notification.useNotification();
+    const openNotification = (name: string, description: string) => {
+        notification.success({
+            message: name,
+            description: description,
+            placement: "bottomRight",
+        })
 
+    };
+    const {state, send} = Vote();
     const [pageNumber, setPageNumber] = useState(0);
     const [voteDialog, setVoteDialog] = useState(false);
     const newVote = () => {
@@ -76,7 +88,6 @@ function WelcomeView() {
         setModal(false);
         window.location.reload();
     }
-    const rowsPerPage = 3;
     const sliderSettings = {
         dots: true,
         infinite: true,
@@ -84,6 +95,16 @@ function WelcomeView() {
         slidesToShow: 3,
         slidesToScroll: 1,
     };
+
+    async function vote(proposal: number) {
+        await send(proposal).then(
+            event => openNotification("Success", "Your vote has been taken into account !")
+        ).catch(error => {
+            setModalText("An error has occured, please try again later")
+            setModal(true)
+        })
+    }
+
 
     return (
         <Grid container xs={12} style={{height: "80vh"}} id={"tsparticles"}>
@@ -96,7 +117,7 @@ function WelcomeView() {
                 aria-labelledby="alert-dialog-title"
             >
                 <DialogTitle
-                    id="alert-dialog-title">{"A new vote has been created  (it might be yours) !"}</DialogTitle>
+                    id="alert-dialog-title">{modalText}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                         The page will now refresh.
@@ -114,12 +135,13 @@ function WelcomeView() {
 
                 <Grid container xs={12} alignItems={"center"} style={{height: "80vh"}}>
                     {!!account ? <React.Fragment>
-                            <Grid item xs={10} style={{paddingLeft: "28vh"}}>
+                            <Grid item xs={10} style={{paddingLeft: "25vh"}}>
                                 <Slider {...sliderSettings}>
-                                    {proposals?.map(prop => prop?.map((value: { ProposalOwner: string; name: string, description: string, owner: string }, index: number) => {
+                                    {proposals?.map(prop => prop?.map((value: { ProposalOwner: string; name: string, description: string, owner: string, voteCount: number }, index: number) => {
                                         return <Grid item xs={12} style={{padding: "40px"}}>
                                             <VoteCard name={value.name} description={value.description}
-                                                      owner={value.ProposalOwner}/>
+                                                      owner={value.ProposalOwner} voteCount={value.voteCount}
+                                                      onVote={() => vote(index)}/>
                                         </Grid>
                                     }))}
                                 </Slider>
@@ -135,18 +157,19 @@ function WelcomeView() {
                                 </Grid>
                             </Grid>
                         </React.Fragment> :
-                        <Grid item xs={12}  style={{padding: "30vh", minHeight:"80vh"}}>
+                        <Grid item xs={12} style={{padding: "30vh", minHeight: "80vh"}}>
 
                             <Paper>
                                 <Typography variant="h5" component="h3">
                                     This is a sheet of paper.
                                 </Typography>
-                                <Typography component="p">Paper can be used to build surface or other elements for your application.</Typography>
+                                <Typography component="p">Paper can be used to build surface or other elements for your
+                                    application.</Typography>
                             </Paper>
 
                         </Grid>
                     }
-                    </Grid>
+                </Grid>
 
             </Grid>
         </Grid>

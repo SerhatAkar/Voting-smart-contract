@@ -70,18 +70,18 @@ contract VotingContract is Ownable {
     event ProposalCreated(Proposal _proposal);
 
     function createProposal(string memory _name, string memory _description, uint endTime) external {
-        Proposal memory newProposal = Proposal(msg.sender, _name, _description, 0, 0);
+        Proposal memory newProposal = Proposal(msg.sender, _name, _description, 0, 1663576187);
         proposals.push(newProposal);
         voterToProposals[msg.sender].push(newProposal);
         emit ProposalCreated(newProposal);
     }
 
-    function vote(uint proposal) public canVote(proposals[proposal], msg.sender) {
+    function vote(uint proposal) canVote(proposals[proposal], msg.sender) external {
         Voter memory sender = voter[msg.sender];
         voterToProposals[msg.sender].push(proposals[proposal]);
         //emit users information (vote list).
         proposals[proposal].voteCount += 1;
-        sender.vote--;
+        sender.vote++;
     }
 
 

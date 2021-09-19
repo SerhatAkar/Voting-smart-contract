@@ -9,4 +9,4 @@ Users can vote for a proposals. Proposals are retrieved from the Ropsten testnet
 Next steps :
 - Limit the number of vote per users
 - Include a user chosen timer for proposals
-
+- Filter proposals for frontend
