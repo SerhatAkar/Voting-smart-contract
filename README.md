@@ -10,3 +10,5 @@ Next steps :
 - Limit the number of vote per users
 - Include a user chosen timer for proposals
 - Filter proposals for frontend
+
+Use npm start in /hardhat/frontend to launch the project.
